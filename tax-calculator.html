@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人所得税计算器</title>
+<style>
+:root{--primary:#1a56db;--primary-light:#3b82f6;--primary-dark:#1e40af;--accent:#06b6d4;--success:#10b981;--danger:#ef4444;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--radius:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Microsoft YaHei","PingFang SC",sans-serif;background:linear-gradient(135deg,#eff6ff,#f0fdf4);color:var(--gray-800);min-height:100vh;padding:0}
+.header{background:linear-gradient(135deg,var(--primary-dark),var(--primary),var(--primary-light));color:#fff;padding:32px 20px;text-align:center;border-bottom:4px solid var(--accent)}
+.header .logo{font-size:40px;margin-bottom:8px}
+.header h1{font-size:28px;font-weight:700;letter-spacing:1px}
+.header p{font-size:14px;opacity:.85;margin-top:4px}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.tabs{display:flex;gap:2px;background:var(--gray-100);border-radius:var(--radius) var(--radius) 0 0;overflow:hidden;border:1px solid var(--gray-200);border-bottom:none}
+.tab-btn{padding:12px 28px;border:none;background:transparent;cursor:pointer;font-size:14px;font-weight:500;color:var(--gray-500)}
+.tab-btn:hover{color:var(--primary);background:rgba(26,86,219,0.05)}
+.tab-btn.active{background:#fff;color:var(--primary);font-weight:600;box-shadow:inset 0 -2px 0 var(--primary)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.card-title{font-size:16px;font-weight:600;color:var(--gray-800);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.form-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:12px;font-weight:500;color:var(--gray-500)}
+.form-group .vt{font-size:14px;color:var(--gray-700);padding:6px 0;font-weight:500}
+.form-group input[type=number],.form-group select{padding:8px 12px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px;width:130px;background:#fff;color:var(--gray-800)}
+.form-group input[type=number]:focus,.form-group select:focus{outline:0;border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.12)}
+.form-group input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);margin-right:6px}
+.cbg{display:flex;flex-wrap:wrap;gap:4px 16px}
+.cbg label{display:flex;align-items:center;font-size:13px;color:var(--gray-700);cursor:pointer;padding:4px 0;font-weight:400}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.dg .form-group{background:var(--gray-50);padding:10px 14px;border-radius:6px;border:1px solid var(--gray-200)}
+.tw{overflow-x:auto;border-radius:6px;border:1px solid var(--gray-200)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--gray-50);padding:10px 12px;text-align:right;font-weight:600;color:var(--gray-600);font-size:12px;border-bottom:1px solid var(--gray-200)}
+td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--gray-100);color:var(--gray-700)}
+tr:last-child td{border-bottom:none}
+td:first-child,th:first-child{text-align:center;color:var(--gray-500)}
+.si{width:110px;padding:6px 10px;border:1px solid var(--gray-300);border-radius:6px;font-size:13px;text-align:right}
+.si:focus{outline:0;border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.12)}
+.ac{color:var(--primary);font-weight:500}
+.ac.tx{color:var(--danger)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.si2{background:var(--gray-50);padding:16px;border-radius:var(--radius);text-align:center;border:1px solid var(--gray-200)}
+.si2 .l{font-size:12px;color:var(--gray-500);font-weight:500}
+.si2 .v{font-size:22px;font-weight:700;color:var(--primary);margin-top:6px}
+.si2 .v.tx{color:var(--danger)}.si2 .v.at{color:var(--success)}
+.bc{display:flex;gap:16px;margin-bottom:16px}
+.bcd{flex:1;padding:20px;border:2px solid var(--gray-200);border-radius:12px;position:relative}
+.bcd.rec{border-color:var(--primary);background:linear-gradient(135deg,#eff6ff,#f0fdf4)}
+.bcd h4{font-size:15px;margin-bottom:10px;color:var(--gray-700)}
+.bcd p{font-size:13px;color:var(--gray-500);margin-bottom:6px}
+.bcd strong{color:var(--gray-800);font-size:18px}
+.bg{position:absolute;top:-11px;right:16px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:3px 14px;border-radius:12px;font-size:11px;font-weight:600}
+.bs{padding:16px;background:linear-gradient(135deg,var(--gray-50),#fff);border-radius:var(--radius);text-align:center;border:1px solid var(--gray-200)}
+.st{color:var(--danger);font-weight:700;font-size:20px}
+.btn{padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.btn-p{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff}
+.btn-p:hover{box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.btn-s{padding:6px 14px;border:1px solid var(--gray-300);border-radius:4px;cursor:pointer;font-size:12px;background:#fff;color:var(--gray-600)}
+.ht{color:var(--gray-400);font-size:13px;text-align:center;padding:30px}
+.ft{margin-top:32px;padding:20px;text-align:center;border-top:1px solid var(--gray-200);color:var(--gray-400);font-size:12px}
+.rw{display:flex;align-items:center;gap:10px}
+.rw input[type=range]{width:140px;height:4px;-webkit-appearance:none;background:var(--gray-200);border-radius:2px;outline:0}
+.rw input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--primary);cursor:pointer;border:2px solid #fff}
+.rw span{font-size:14px;font-weight:600;color:var(--primary);min-width:32px;text-align:center}
+.nt{background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:8px 14px;font-size:12px;color:#92400e;margin-top:4px}
+@media(max-width:768px){.bc{flex-direction:column}.sg{grid-template-columns:repeat(2,1fr)}.dg{grid-template-columns:1fr}table{font-size:12px}.si{width:70px}.header h1{font-size:22px}.tab-btn{padding:10px 16px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🧮</div>
+  <h1>个人所得税计算器</h1>
+  <p>工资薪金 · 年终奖优化 · 劳务报酬</p>
+</div>
+
+<div class="container">
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="tab-salary">工资薪金</button>
+  <button class="tab-btn" data-tab="tab-bonus">年终奖优化</button>
+</div>
+
+<div class="tab-panel active" id="tab-salary">
+
+  <div class="card">
+    <div class="card-title">⚙️ 社保公积金设置</div>
+    <div class="form-row">
+      <div class="form-group"><label>养老保险</label><span class="vt">8% <span style="color:#999;font-weight:400">(自动)</span></span></div>
+      <div class="form-group"><label>医疗保险</label><span class="vt">2% <span style="color:#999;font-weight:400">(自动)</span></span></div>
+      <div class="form-group"><label>失业保险</label><span class="vt">0.5% <span style="color:#999;font-weight:400">(自动)</span></span></div>
+      <div class="form-group">
+        <label>住房公积金</label>
+        <div class="rw">
+          <input type="range" id="hf" min="5" max="12" value="5">
+          <span id="hfl">5%</span>
+        </div>
+      </div>
+    </div>
+    <div class="nt">社保、公积金按应发工资为基数自动计算</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 专项附加扣除</div>
+    <div class="dg">
+      <div class="form-group">
+        <label>子女教育</label>
+        <input type="number" id="cc" min="0" max="10" placeholder="子女数量（每个2,000元/月）" style="width:180px">
+      </div>
+      <div class="form-group">
+        <label>继续教育</label>
+        <div class="cbg">
+          <label><input type="checkbox" id="ea"> 学历教育 400元/月</label>
+          <label><input type="checkbox" id="ev"> 职业资格 3,600元/年</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>住房贷款利息</label>
+        <label style="font-weight:400;font-size:13px"><input type="checkbox" id="hl"> 1,000元/月（与住房租金互斥）</label>
+      </div>
+      <div class="form-group">
+        <label>住房租金</label>
+        <select id="hr" style="width:180px">
+          <option value="0">不选</option>
+          <option value="1">1,500元/月（京沪广深）</option>
+          <option value="2">1,100元/月（大城市）</option>
+          <option value="3">800元/月（其他城市）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>赡养老人</label>
+        <div class="cbg">
+          <label><input type="checkbox" id="eo"> 独生子女 3,000元/月</label>
+          <label><input type="checkbox" id="es"> 非独生分摊 ≤1,500元/月</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>婴幼儿照护</label>
+        <input type="number" id="ic" min="0" max="10" placeholder="数量（每个2,000元/月）" style="width:180px">
+      </div>
+      <div class="form-group">
+        <label>大病医疗（年度汇算）</label>
+        <input type="number" id="ma" min="0" placeholder="超15,000元部分，上限80,000元" style="width:210px">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💰 每月工资输入</div>
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th style="min-width:44px">月份</th><th>应发工资</th><th>社保</th><th>公积金</th><th>专项扣除</th><th>累计应纳税所得额</th><th>当月个税</th><th>累计个税</th></tr>
+        </thead>
+        <tbody id="stb"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--primary-light);background:linear-gradient(135deg,#f8faff,#f0fdf4)">
+    <div class="card-title">📊 年度汇总</div>
+    <div class="sg">
+      <div class="si2"><div class="l">全年收入</div><div class="v" id="s-ts">0</div></div>
+      <div class="si2"><div class="l">社保合计</div><div class="v" id="s-tso">0</div></div>
+      <div class="si2"><div class="l">公积金合计</div><div class="v" id="s-th">0</div></div>
+      <div class="si2"><div class="l">专项附加扣除</div><div class="v" id="s-tsp">0</div></div>
+      <div class="si2"><div class="l">全年应纳个税</div><div class="v tx" id="s-tt">0</div></div>
+      <div class="si2"><div class="l">税后到手</div><div class="v at" id="s-at">0</div></div>
+      <div class="si2"><div class="l">平均税率</div><div class="v" id="s-ar">0%</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-bonus">
+  <div class="card">
+    <div class="card-title">🎯 年终奖方案优化</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>年终奖金额（元）</label>
+        <input type="number" id="bi" min="0" step="1000" placeholder="输入年终奖金额">
+      </div>
+    </div>
+    <div id="br"><p class="ht">输入年终奖金额，自动对比两种计税方案</p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💾 保存方案</div>
+    <button class="btn btn-p" id="sb">💾 保存当前方案</button>
+    <span style="font-size:12px;color:var(--gray-400);margin-left:12px">可多次保存不同金额，方便对比选择最优方案</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📜 历史方案对比</div>
+    <div id="bh"><p class="ht">暂无保存记录</p></div>
+  </div>
+</div>
+
+<div class="ft">本计算器仅供参考，实际纳税金额以税务机关核定为准。</div>
+
+</div>
+
+<script>
+var R=[[0,36000,0.03,0],[36000,144000,0.1,2520],[144000,300000,0.2,16920],[300000,420000,0.25,31920],[420000,660000,0.3,52920],[660000,960000,0.35,85920],[960000,Infinity,0.45,181920]];
+var M=[[0,3000,0.03,0],[3000,12000,0.1,210],[12000,25000,0.2,1410],[25000,35000,0.25,2660],[35000,55000,0.3,4410],[55000,80000,0.35,7160],[80000,Infinity,0.45,15160]];
+function gA(x){for(var b of R)if(x>b[0]&&x<=b[1])return b;return R[6]}
+function gM(x){for(var b of M)if(x>b[0]&&x<=b[1])return b;return M[6]}
+var S={s:[0,0,0,0,0,0,0,0,0,0,0,0],hf:0.05,d:{cc:0,ea:0,ev:0,ma:0,hl:0,hr:0,eo:0,es:0,ic:0},bh:[]};
+function gD(d){return(d.cc||0)*2000+(d.ea?400:0)+(d.hl?1000:0)+(d.hr==1?1500:d.hr==2?1100:d.hr==3?800:0)+(d.eo?3000:d.es?1500:0)+(d.ic||0)*2000}
+function calc(s,hf,sp){if(!s||s.length!=12)s=[0,0,0,0,0,0,0,0,0,0,0,0];var cs=0,cb=0,cso=0,ch=0,csp=0,pt=0,ms=[];for(var i=0;i<12;i++){var sa=s[i]||0,so=sa*0.105,hp=sa*hf;cs+=sa;cb+=5000;cso+=so;ch+=hp;csp+=sp;var tx=Math.max(0,cs-cb-cso-ch-csp),tc=0,tm=0;if(tx>0){var br=gA(tx);tc=Math.max(0,tx*br[2]-br[3]);tm=Math.max(0,tc-pt)}pt=tc;ms.push({m:i+1,sa:sa,so:so,hp:hp,sp:sp,tx:tx,t1:Math.round(tm),tc:Math.round(tc)})}var ts=s.reduce(function(a,b){return a+b},0),tt=Math.round(pt);var tsoc=ms.reduce(function(a,m){return a+m.so},0),thou=ms.reduce(function(a,m){return a+m.hp},0);return{ms:ms,su:{ts:Math.round(ts),tso:Math.round(tsoc),th:Math.round(thou),tsp:Math.round(sp*12),tt:tt,at:Math.round(ts-tsoc-thou-tt),ar:ts>0?tt/ts:0}}}
+function cb(b,su,sp){if(b<=0)return null;var am=b/12,mb=gM(am),tA=Math.round(Math.max(0,b*mb[2]-mb[3]));var cm=su.ts+b,dd=60000+su.tso+su.th+sp*12,ct=Math.max(0,cm-dd),tB=0;if(ct>0){var ab=gA(ct);tB=Math.max(0,Math.round(ct*ab[2]-ab[3])-su.tt)}var sv=Math.abs(tA-tB),rc=tA<=tB?'\u5355\u72EC\u8BA1\u7A0E':'\u5408\u5E76\u8BA1\u7A0E';return{b:b,mA:tA,mB:tB,sv:sv,rc:rc,aA:b-tA,aB:b-tB}}
+function rT(){var c=document.getElementById('stb');if(!c)return;var h='';for(var i=0;i<12;i++)h+='<tr><td>'+(i+1)+'\u6708</td><td><input type="number" class="si" data-m="'+i+'" value="'+(S.s[i]||'')+'" min="0" step="1000" placeholder="0"></td><td class="ac" id="sc-'+i+'">0</td><td class="ac" id="hf-'+i+'">0</td><td class="ac" id="sp-'+i+'">0</td><td class="ac" id="tx-'+i+'">0</td><td class="ac tx" id="tm-'+i+'">0</td><td class="ac tx" id="tc-'+i+'">0</td></tr>';c.innerHTML=h}
+function uA(){var hf=S.hf,sp=gD(S.d),r=calc(S.s,hf,sp);for(var i=0;i<12;i++){var m=r.ms[i];document.getElementById('sc-'+i).textContent=m.so.toFixed(2);document.getElementById('hf-'+i).textContent=m.hp.toFixed(2);document.getElementById('sp-'+i).textContent=sp.toFixed(2);document.getElementById('tx-'+i).textContent=m.tx<0.01?'0':m.tx.toFixed(2);document.getElementById('tm-'+i).textContent=m.t1;document.getElementById('tc-'+i).textContent=m.tc}var su=r.su;document.getElementById('s-ts').textContent=su.ts.toLocaleString();document.getElementById('s-tso').textContent=su.tso.toLocaleString();document.getElementById('s-th').textContent=su.th.toLocaleString();document.getElementById('s-tsp').textContent=su.tsp.toLocaleString();document.getElementById('s-tt').textContent=su.tt.toLocaleString();document.getElementById('s-at').textContent=su.at.toLocaleString();document.getElementById('s-ar').textContent=(su.ar*100).toFixed(2)+'%';uB()}
+function uB(){var b=parseFloat(document.getElementById('bi').value)||0,con=document.getElementById('br');if(b<=0){con.innerHTML='<p class="ht">\u8F93\u5165\u5E74\u7EC8\u5956\u91D1\u989D\uFF0C\u81EA\u52A8\u5BF9\u6BD4\u4E24\u79CD\u8BA1\u7A0E\u65B9\u6848</p>';return}var sp=gD(S.d),sr=calc(S.s,S.hf,sp),o=cb(b,sr.su,sp);if(!o){con.innerHTML='<p class="ht">\u8BF7\u8F93\u5165\u6709\u6548\u91D1\u989D</p>';return}var isA=o.rc=='\u5355\u72EC\u8BA1\u7A0E';con.innerHTML='<div class="bc"><div class="bcd'+(isA?' rec':'')+'">'+(isA?'<div class="bg">\u63A8\u8350</div>':'')+'<h4>\u65B9\u6848A\uFF1A\u5355\u72EC\u8BA1\u7A0E</h4><p>\u5E94\u7EB3\u7A0E\u989D\uFF1A<strong>'+o.mA.toLocaleString()+' \u5143</strong></p><p>\u7A0E\u540E\u5E74\u7EC8\u5956\uFF1A'+o.aA.toLocaleString()+' \u5143</p><p style="font-size:11px;color:#999">\u5E74\u7EC8\u5956 \u00F7 12 \u67E5\u6708\u5EA6\u7A0E\u7387\u8868</p></div><div class="bcd'+(!isA?' rec':'')+'">'+(!isA?'<div class="bg">\u63A8\u8350</div>':'')+'<h4>\u65B9\u6848B\uFF1A\u5408\u5E76\u8BA1\u7A0E</h4><p>\u5E94\u7EB3\u7A0E\u989D\uFF1A<strong>'+o.mB.toLocaleString()+' \u5143</strong></p><p>\u7A0E\u540E\u5E74\u7EC8\u5956\uFF1A'+o.aB.toLocaleString()+' \u5143</p><p style="font-size:11px;color:#999">\u5E76\u5165\u5168\u5E74\u7EFC\u5408\u6240\u5F97\u8BA1\u7A0E</p></div></div><div class="bs"><p>\u63A8\u8350\u65B9\u6848\uFF1A<strong style="color:var(--primary)">'+o.rc+'</strong> &nbsp;|&nbsp; \u53EF\u8282\u7701 <span class="st">'+o.sv.toLocaleString()+' \u5143</span></p></div>'}
+function sB(){var b=parseFloat(document.getElementById('bi').value)||0;if(b<=0)return;var sp=gD(S.d),sr=calc(S.s,S.hf,sp),o=cb(b,sr.su,sp);if(!o)return;S.bh.unshift({id:Date.now(),ts:new Date().toLocaleString(),b:b,mA:o.mA,mB:o.mB,sv:o.sv,rc:o.rc});sS();rH()}
+function rH(){var con=document.getElementById('bh');if(!con)return;if(!S.bh.length){con.innerHTML='<p class="ht">\u6682\u65E0\u4FDD\u5B58\u8BB0\u5F55</p>';return}var h='<div class="tw"><table><tr><th>\u65F6\u95F4</th><th>\u5E74\u7EC8\u5956</th><th>\u5355\u72EC\u8BA1\u7A0E</th><th>\u5408\u5E76\u8BA1\u7A0E</th><th style="color:var(--danger)">\u8282\u7701</th><th>\u63A8\u8350</th><th></th></tr>';S.bh.forEach(function(it){h+='<tr><td>'+it.ts+'</td><td>'+it.b.toLocaleString()+'</td><td>'+it.mA.toLocaleString()+'</td><td>'+it.mB.toLocaleString()+'</td><td style="color:var(--danger);font-weight:600">'+it.sv.toLocaleString()+'</td><td>'+it.rc+'</td><td><button class="btn-s" onclick="dB('+it.id+')">\u5220\u9664</button></td></tr>'});h+='</table></div>';con.innerHTML=h}
+function dB(id){S.bh=S.bh.filter(function(it){return it.id!==id});sS();rH()}
+function sS(){try{localStorage.setItem('tx',JSON.stringify(S))}catch(e){}}
+function lS(){try{var s=localStorage.getItem('tx');if(s){var p=JSON.parse(s);S.s=p.s||[0,0,0,0,0,0,0,0,0,0,0,0];S.hf=p.hf||0.05;S.d=p.d||S.d;S.bh=p.bh||[]}}catch(e){}}
+document.addEventListener('DOMContentLoaded',function(){lS();rT();rH();var d=S.d;document.getElementById('hf').value=Math.round(S.hf*100);document.getElementById('hfl').textContent=Math.round(S.hf*100)+'%';document.getElementById('cc').value=d.cc||'';document.getElementById('ea').checked=d.ea;document.getElementById('ev').checked=d.ev;document.getElementById('ma').value=d.ma||'';document.getElementById('hl').checked=d.hl;document.getElementById('hr').value=d.hr||0;document.getElementById('eo').checked=d.eo;document.getElementById('es').checked=d.es;document.getElementById('ic').value=d.ic||'';uA();document.addEventListener('input',function(e){if(e.target.classList.contains('si')){var m=parseInt(e.target.dataset.m);S.s[m]=parseFloat(e.target.value)||0;sS();uA()}});document.getElementById('hf').addEventListener('input',function(){S.hf=parseFloat(this.value)/100;document.getElementById('hfl').textContent=this.value+'%';sS();uA()});document.getElementById('cc').addEventListener('input',function(){S.d.cc=parseInt(this.value)||0;sS();uA()});document.getElementById('ea').addEventListener('change',function(){S.d.ea=this.checked;sS();uA()});document.getElementById('ev').addEventListener('change',function(){S.d.ev=this.checked;sS();uA()});document.getElementById('ma').addEventListener('input',function(){S.d.ma=parseFloat(this.value)||0;sS();uA()});document.getElementById('hl').addEventListener('change',function(){S.d.hl=this.checked;if(this.checked)document.getElementById('hr').value=0;sS();uA()});document.getElementById('hr').addEventListener('change',function(){S.d.hr=parseInt(this.value)||0;if(parseInt(this.value))document.getElementById('hl').checked=false;sS();uA()});document.getElementById('eo').addEventListener('change',function(){S.d.eo=this.checked;if(this.checked)document.getElementById('es').checked=false;sS();uA()});document.getElementById('es').addEventListener('change',function(){S.d.es=this.checked;if(this.checked)document.getElementById('eo').checked=false;sS();uA()});document.getElementById('ic').addEventListener('input',function(){S.d.ic=parseInt(this.value)||0;sS();uA()});document.getElementById('bi').addEventListener('input',uB);document.getElementById('sb').addEventListener('click',sB);document.querySelectorAll('.tab-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('active')});this.classList.add('active');document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});document.getElementById(this.dataset.tab).classList.add('active')})})});
+</script>
+</body>
+</html>
