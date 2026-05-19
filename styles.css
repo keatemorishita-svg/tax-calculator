@@ -1,0 +1,73 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: #f0f2f5; color: #333; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { text-align: center; color: #1a73e8; margin-bottom: 24px; font-size: 24px; }
+h2 { font-size: 18px; color: #1a73e8; margin-bottom: 12px; }
+h3 { font-size: 15px; color: #555; margin-bottom: 8px; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+.tab-btn { padding: 10px 24px; border: none; background: #e8eaed; cursor: pointer; border-radius: 8px 8px 0 0; font-size: 14px; transition: all 0.2s; }
+.tab-btn:hover { background: #d2d5d9; }
+.tab-btn.active { background: #fff; color: #1a73e8; font-weight: 600; box-shadow: 0 -2px 4px rgba(0,0,0,0.05); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.card-title { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 12px; }
+
+.form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; align-items: center; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 12px; color: #666; }
+.form-group input[type="number"], .form-group select { padding: 6px 10px; border: 1px solid #dadce0; border-radius: 6px; font-size: 13px; width: 120px; }
+.form-group input[type="number"]:focus, .form-group select:focus { outline: none; border-color: #1a73e8; }
+.form-group input[type="checkbox"] { margin-right: 4px; }
+.form-group.checkbox-group { flex-direction: row; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid #e8eaed; }
+th { background: #f8f9fa; font-weight: 600; color: #555; position: sticky; top: 0; }
+td:first-child, th:first-child { text-align: center; }
+td:last-child, th:last-child { text-align: right; }
+.salary-input { width: 100px; padding: 6px 8px; border: 1px solid #dadce0; border-radius: 6px; font-size: 13px; text-align: right; }
+.salary-input:focus { outline: none; border-color: #1a73e8; }
+.auto-cell { color: #1a73e8; font-weight: 500; }
+
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.summary-item { background: #f8f9fa; padding: 12px; border-radius: 8px; text-align: center; }
+.summary-item .label { font-size: 12px; color: #666; }
+.summary-item .value { font-size: 18px; font-weight: 600; color: #1a73e8; margin-top: 4px; }
+.summary-item .value.tax { color: #e53935; }
+.summary-item .value.after-tax { color: #43a047; }
+
+.bonus-cards { display: flex; gap: 16px; margin-bottom: 16px; }
+.bonus-card { flex: 1; padding: 16px; border: 2px solid #e8eaed; border-radius: 10px; position: relative; }
+.bonus-card.recommended { border-color: #1a73e8; background: #f0f6ff; }
+.bonus-card h4 { font-size: 14px; margin-bottom: 8px; color: #333; }
+.bonus-card p { font-size: 13px; color: #666; margin-bottom: 4px; }
+.bonus-card strong { color: #333; font-size: 16px; }
+.badge { position: absolute; top: -10px; right: 12px; background: #1a73e8; color: #fff; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.bonus-summary { text-align: center; padding: 12px; background: #f8f9fa; border-radius: 8px; }
+.bonus-summary strong { font-size: 16px; }
+.saving { color: #e53935; font-weight: 600; }
+
+.btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.btn-primary { background: #1a73e8; color: #fff; }
+.btn-primary:hover { background: #1557b0; }
+.btn-small { padding: 4px 10px; border: 1px solid #dadce0; border-radius: 4px; cursor: pointer; font-size: 12px; background: #fff; }
+.btn-small:hover { background: #f1f3f4; }
+
+.hint { color: #999; font-size: 13px; text-align: center; padding: 20px; }
+
+.deductions-section { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.deductions-section .form-group { background: #f8f9fa; padding: 8px 12px; border-radius: 6px; }
+
+.range-container { display: flex; align-items: center; gap: 8px; }
+.range-container input[type="range"] { width: 120px; }
+.range-container span { font-size: 13px; font-weight: 600; color: #1a73e8; }
+
+@media (max-width: 768px) {
+  .bonus-cards { flex-direction: column; }
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  table { font-size: 12px; }
+  .salary-input { width: 70px; }
+}
