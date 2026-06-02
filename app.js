@@ -1,4 +1,0 @@
-(function () {
-  loadState();
-  initUI();
-})();
